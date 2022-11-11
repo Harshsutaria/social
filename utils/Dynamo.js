@@ -1,5 +1,6 @@
 const AWS = require("aws-sdk");
 const uuid = require("uuid4");
+const dynamo = {};
 
 // creating dynamo db instance
 const dynamoDBInstance = () =>
@@ -15,10 +16,9 @@ AWS.config.update({
 });
 
 // method used to insert in dynamo
-async function putItem(data) {
-  console.log("inside putData in dynamo with data as ", data);
-  const id = uuid();
-  console.log("id is", id);
+dynamo.putItem = async function putItem(id, data, tableName) {
+  console.log("inside putData in dynamo with data as ", id, data);
+  // console.log("id is", id);
 
   // creating aws connection
   AWS.config.update({
@@ -29,13 +29,13 @@ async function putItem(data) {
 
   // creating put request
   const putRequest = {
-    TableName: "",
+    TableName: `${tableName}`,
     Item: {
       id: {
         S: id, //S stands for the data type for the key to be stored!! PS in whole project we have used S as it symbolizes that we have stored data of type string in id field
       },
       data: {
-        S: data,
+        S: JSON.stringify(data),
       },
     },
   };
@@ -58,11 +58,9 @@ async function putItem(data) {
     body: JSON.stringify(data),
     info: "record inserted successfully in dynamo",
   };
-}
+};
 
-//putItem("mango cheems singh!!");
-
-async function getItem(id) {
+dynamo.getItem = async function getItem(id, tableName) {
   console.log("Invoked for ", id);
   console.log(`Fetching item from DB with id: ${id}`);
   let query = {
@@ -71,7 +69,7 @@ async function getItem(id) {
         S: id,
       },
     },
-    TableName: "",
+    TableName: tableName,
   };
 
   try {
@@ -85,7 +83,7 @@ async function getItem(id) {
     }
 
     console.log("RESPONSE IS ::", JSON.stringify(response));
-    return response.Item;
+    return JSON.parse(response.Item.data["S"]);
   } catch (error) {
     console.log(error);
     console.log("Error while getting data. Please check the ID");
@@ -94,14 +92,14 @@ async function getItem(id) {
       body: JSON.stringify("Internal Server Error"),
     };
   }
-}
+};
 
-async function deleteItem(id) {
+dynamo.deleteItem = async function deleteItem(id, tableName) {
   console.log("inside delete from dynamodb with id", id);
 
   //trying ti create delete params
   let deleteParams = {
-    TableName: "",
+    TableName: tableName,
     Key: {
       id: { S: id },
     },
@@ -113,4 +111,6 @@ async function deleteItem(id) {
 
   let res = await dynamoDBInstance().deleteItem(deleteParams).promise();
   console.log("res is ", res);
-}
+};
+
+module.exports = dynamo;
