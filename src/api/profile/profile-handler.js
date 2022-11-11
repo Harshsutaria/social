@@ -11,19 +11,113 @@ const {
  */
 let handler = {};
 
-handler.login = async (req, res) => {
-  console.log("INSIDE LOGIN HANDLER WITH");
+handler.signUp = async (req, res) => {
+  console.log("INSIDE signUp USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);
-  return res.json({ code: 200, info: "login successfully completed" });
+  let result;
+  //trying to call service layer for logging in user
+  try {
+    result = await service.signUp(params, body);
+    return buildResponse(
+      HTTPConst.success.OK,
+      result,
+      "USER signUp IN SUCCESSFULLY"
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE signUp USER AT HANDLER LAYER");
+    return buildError(
+      HTTPConst.serverError.INTERNAL_SERVER,
+      error,
+      "USER signUp FAILED"
+    );
+  }
 };
 
+handler.login = async (req, res) => {
+  console.log("INSIDE LOGIN USER HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for logging in user
+  try {
+    result = await service.login(params, body);
+    return buildResponse(
+      HTTPConst.success.OK,
+      result,
+      "USER LOGGED IN SUCCESSFULLY"
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE LOGGING USER AT HANDLER LAYER");
+    return buildError(
+      HTTPConst.serverError.INTERNAL_SERVER,
+      error,
+      "USER LOGGING FAILED"
+    );
+  }
+};
 handler.createUser = async (req, res) => {
   console.log("INSIDE CREATE USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);
   let result;
+  //trying to call service layer for creating user
   try {
     result = await service.createUser(params, body);
-  } catch (error) {}
+    return buildResponse(
+      HTTPConst.success.CREATED,
+      result,
+      "USER CREATED SUCCESSFULLY"
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE CREATING USER AT HANDLER LAYER");
+    return buildError(
+      HTTPConst.serverError.INTERNAL_SERVER,
+      error,
+      "USER CREATION FAILED"
+    );
+  }
+};
+
+handler.updateUser = async (req, res) => {
+  console.log("INSIDE update USER HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating user
+  try {
+    result = await service.updateUser(params, body);
+    return buildResponse(
+      HTTPConst.success.ACCEPTED,
+      result,
+      "USER updateD SUCCESSFULLY"
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE CREATING USER AT HANDLER LAYER");
+    return buildError(
+      HTTPConst.serverError.INTERNAL_SERVER,
+      error,
+      "USER CREATION FAILED"
+    );
+  }
+};
+
+handler.getUser = async (req, res) => {
+  console.log("INSIDE CREATE USER HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating user
+  try {
+    result = await service.getUser(params);
+    return buildResponse(
+      HTTPConst.success.CREATED,
+      result,
+      "USER FETCHED SUCCESSFULLY"
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING USER AT HANDLER LAYER");
+    return buildError(
+      HTTPConst.serverError.INTERNAL_SERVER,
+      error,
+      "USER FETCHING FAILED"
+    );
+  }
 };
 
 /**utility method to fetch service args */

@@ -1,10 +1,5 @@
 const tokenization = require("../../../utils/JWT");
 const helper = require("./profile-helper");
-const {
-  HTTPConst,
-  buildResponse,
-  buildError,
-} = require("../../../utils/http-constants");
 const dao = require("./profile-dao");
 const uuid = require("uuid4");
 
