@@ -138,6 +138,40 @@ service.getUserByName = async (params) => {
   return result;
 };
 
+service.activity = async (params, body) => {
+  console.log("INSIDE UPDATE USER ACTIVITY", JSON.stringify(params));
+
+  let result;
+
+  //throwing error if exception occurs
+  if (!params.source_profile || !params.destination_profile) {
+    console.error("Invalid Request Payload");
+    throw new Error("INVALID REQUEST payload for user activity");
+  }
+
+  //calling the dao layer for dumping profile
+  if (params.activityid == "FOLLOW") {
+    result = await dao.insertUpdateUserActivityInSql(params, body);
+  } else {
+    console.log("REMOVE SOURCE AND DESTINATION ACTIVITY IN SQL");
+    result = await dao.deleteUserActivityInSql(params);
+  }
+
+  return result;
+};
+
+// service.activity(
+//   {
+//     source_profile: "1484848454",
+//     destination_profile: "2",
+//     activityid: "UNFOLLOW",
+//   },
+//   {
+//     source_profile_name: "messi",
+//     destination_profile_name: "ronaldo",
+//   }
+// );
+
 /*********************Required Methods****************/
 function createRequestPayload(body) {
   return {

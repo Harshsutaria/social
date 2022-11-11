@@ -52,6 +52,63 @@ dao.getUserByName = async (name) => {
   return result;
 };
 
+dao.insertUpdateUserActivityInSql = async (params, body) => {
+  console.log(
+    "INSIDE insertUpdateUserActivityInSql DAO LAYER WITH",
+    JSON.stringify(params, body)
+  );
+
+  let sql = `insert into ${constants.PG_USER_ACTIVITY_TABLE}(source_profile,activityid ,destination_profile,source_profile_name,destination_profile_name) values($1,$2,$3,$4,$5)
+    on conflict ( source_profile ,activityid , destination_profile) do update set activityid =$2 where ${constants.PG_USER_ACTIVITY_TABLE}.source_profile = '$1' and ${constants.PG_USER_ACTIVITY_TABLE}.destination_profile='$3'`;
+
+  console.log("PREPARED SQL QUERY AS ", sql);
+  let result;
+  try {
+    result = await postgres.executeInsertOrUpdate(sql, [
+      params.source_profile,
+      params.activityid,
+      params.destination_profile,
+      body.source_profile_name,
+      body.destination_profile_name,
+    ]);
+  } catch (error) {
+    console.log(
+      "GETTING ERROR WHILE INSERT/UPDATE ACTIVITY DATA FROM POSTGRES",
+      error
+    );
+  }
+  console.log("RESULT IS result", JSON.stringify(result));
+  return result;
+};
+
+dao.deleteUserActivityInSql = async (params, body) => {
+  console.log(
+    "INSIDE insertUpdateUserActivityInSql DAO LAYER WITH",
+    JSON.stringify(params, body)
+  );
+
+  let sql = `delete from ${constants.PG_USER_ACTIVITY_TABLE} where activityid='FOLLOW' and source_profile =$1 
+            and destination_profile = $2`;
+
+  console.log("PREPARED SQL QUERY AS ", sql);
+  let result;
+
+  //trying to execute sq query
+  try {
+    result = await postgres.execute(sql, [
+      params.source_profile,
+      params.destination_profile,
+    ]);
+  } catch (error) {
+    console.log(
+      "GETTING ERROR WHILE DELETE ACTIVITY DATA FROM POSTGRES",
+      error
+    );
+  }
+  console.log("RESULT IS result", JSON.stringify(result));
+  return result;
+};
+
 dao.insertUpdateInDynamo = async function (id, data) {
   console.log("INSIDE insertUpdateInDynamo WITH", id);
   let result;

@@ -7,5 +7,6 @@ app.post("/signUp", handler.signUp);
 app.post("/", handler.createUser);
 app.put("/:id", handler.updateUser);
 app.get("/:id", handler.getUser);
-app.get("/", handler.searchUser);
+app.get("/", handler.getUserByName);
+app.put("/:source_profile/:activityId/:destination_profile", handler.activity);
 module.exports = app;

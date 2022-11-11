@@ -15,3 +15,12 @@ id varchar primary key not null,
 name varchar not null,
 password varchar not null
 )
+
+create table profile_Activity(
+source_profile varchar not null,
+source_profile_name varchar not null,
+activityid varchar not null,
+destination_profile varchar not null,
+destination_profile_name varchar not null,
+primary key(source_profile , activityid , destination_profile)
+)

@@ -128,7 +128,7 @@ handler.getUser = async (req, res) => {
   }
 };
 
-handler.getUser = async (req, res) => {
+handler.getUserByName = async (req, res) => {
   console.log("INSIDE GET USER BY NAME");
   let { params } = getServiceArgs(req);
   let result;
@@ -150,6 +150,24 @@ handler.getUser = async (req, res) => {
         error,
         "USER FETCHING FAILED"
       )
+    );
+  }
+};
+
+handler.activity = async (req, res) => {
+  console.log("INSIDE activity BY NAME");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for fetching user
+  try {
+    result = await service.activity(params, body);
+    return res.json(
+      buildResponse(HTTPConst.success.OK, result, "USER ACTIVITY UPDATED")
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE UPDATING USER ACTIVITY AT HANDLER LAYER");
+    return res.json(
+      buildError(HTTPConst.success.ACCEPTED, error, "USER ACTIVITY UPDATED")
     );
   }
 };
