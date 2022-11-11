@@ -52,6 +52,22 @@ dao.insertUpdateInDynamo = async function (id, data) {
   return result;
 };
 
+dao.getLoginUserInfo = async function (id) {
+  console.log("INSIDE getLoginUserInfo WITH", id);
+  let result;
+
+  let sql = `select * from ${constants.PG_PROFILE_LOGIN_TABLE} where id = ${id} `;
+  console.log("PREPARED SQL QUERY IS ", sql);
+  try {
+    result = await postgres.execute(sql);
+  } catch (err) {
+    console.log("GETTING ERROR WHILE FETCHING LOGIN INFO FROM", err);
+    throw new Error(`RECORD NOT FOUND ${err}`);
+  }
+  console.log("USER LOGIN INFO IS", result);
+  return result[0];
+};
+
 dao.createUserInPostgres = async function (UserData) {
   console.log("INSIDE CREATE USER DAO LAYER WITH", JSON.stringify(UserData));
 

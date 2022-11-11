@@ -18,25 +18,27 @@ service.login = async (params, body) => {
     console.log("Inside login");
     let loginStatus = false;
 
-    let userData = await dao.getuserData(body.emailId, true, false, true);
+    //fetching login user info from postgres
+    let userData = await dao.getLoginUserInfo(body.emailId);
 
-    if (!userData) throw new Error(`Player not registered, Please sign-up`);
+    if (!userData) throw new Error(`User not registered, Please sign-up`);
 
     if (body.password && body.password == userData.password) {
       loginStatus = true;
     }
 
-    if (!loginStatus)
-      throw new Error(`${body.password ? `Invalid password` : `Invalid OTP`}`);
+    if (!loginStatus) throw new Error(`Invalid password`);
 
-    console.log(userData, loginStatus);
+    console.log("USER LOGIN SUCCESSFULLY");
 
     //generating jwt token
     let tokenData = await tokenization.generateUserToken(
-      userData.mobileno,
-      userData.password
+      userData.id,
+      userData.name,
+      username.password
     );
-    return { status: true, token: tokenData.token, playerId: playerData.id };
+
+    return { status: true, token: tokenData.token, userData };
   } catch (err) {
     throw new Error(err.message || "Unable to login");
   }
