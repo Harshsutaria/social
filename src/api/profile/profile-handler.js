@@ -6,6 +6,9 @@ const {
   buildError,
 } = require("../../../utils/http-constants");
 
+/**
+ * Container for profile handler.
+ */
 let handler = {};
 
 handler.login = async (req, res) => {

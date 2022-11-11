@@ -50,6 +50,21 @@ function validateCreateRequestPayload(payload) {
   return validation;
 }
 
+function validateGetRequestParam(params) {
+  let validation = {};
+  if (!params.id) {
+    console.log("ID IS MANDATORY");
+    validation.status = false;
+    validation.data = "ID IS MANDATORY";
+    return validation;
+  }
+
+  validation.status = true;
+  validation.data = "VALIDATION SUCCESS.";
+  return validation;
+}
+
 module.exports = {
   validateCreateRequestPayload,
+  validateGetRequestParam,
 };

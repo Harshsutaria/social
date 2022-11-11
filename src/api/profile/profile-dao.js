@@ -1,7 +1,9 @@
 const postgres = require("../../../utils/postgresDB/postgres-singledb");
 const constants = require("../../constants/service-constants");
 const dynamo = require("../../../utils/Dynamo");
-
+/**
+ * Container for profile DAO.
+ */
 const dao = {};
 
 dao.createUser = async (UserData) => {
