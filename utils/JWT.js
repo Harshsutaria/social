@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const postgres = require("./postgresDB/postgres-singledb");
 
 const tokenSecret = "SOCIAL123";
+//initializing connection with the client
 postgres.clientConnect("commondb");
 
 /** Expiry time should be in following standard
@@ -85,24 +86,19 @@ module.exports = tokenization;
 
 /********************************************************Required Methods *******************************************/
 
-const generateUserToken1 = async function (
-  userName,
-  password,
-  isWhiteListed = false,
-  expiry
-) {
-  if (!userName) {
-  } else if (!password && isWhiteListed) {
-  }
-
+const generateUserToken1 = async function (userName, password, expiry) {
+  console.log("INSIDE GENERATE USER TOKEN WITH", userName, password);
+  //trying to authenticate user
   const authResult = await authenticateUser(userName, password);
 
+  //adding basic validation
   if (!authResult.status && authResult.error) {
     return { errorMessage: authResult.error.message };
   }
 
-  /* Generate new token with fetched user data */
+  /* Preparing user payload based on the auth result*/
   const tokenData = prepareTokenData(authResult);
+  /**Preparing JWT token for the user */
   const token = jwtLib.generateJWT(tokenData, expiry);
   return { token, userName };
 };
@@ -149,8 +145,7 @@ function prepareTokenData(userData) {
   const result = {
     id: userData.id,
     name: userData.name,
-    // password: userData.decryptedPassword,
-    mobileno: userData.mobileno,
+    emailId: userData.emailId,
     image: userData.image,
     gender: userData.gender,
     state: userData.state,

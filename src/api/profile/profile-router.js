@@ -1,10 +1,10 @@
 const express = require("express");
+const handler = require("./profile-handler");
 const app = express.Router();
 
-function route() {
-  app.get("/", (request, res) => {
-    console.log("INSIDE GET USER ROUTER");
-  });
-}
+console.log("INSIDE AUTH ROUTER");
 
-module.exports = route;
+app.post("/login", handler.login);
+app.post("/", handler.createUser);
+
+module.exports = app;
