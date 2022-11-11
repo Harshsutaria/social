@@ -18,17 +18,17 @@ handler.signUp = async (req, res) => {
   //trying to call service layer for logging in user
   try {
     result = await service.signUp(params, body);
-    return buildResponse(
-      HTTPConst.success.OK,
-      result,
-      "USER signUp IN SUCCESSFULLY"
+    return res.json(
+      buildResponse(HTTPConst.success.OK, result, "USER signUp IN SUCCESSFULLY")
     );
   } catch (error) {
     console.log("GETTING ERROR WHILE signUp USER AT HANDLER LAYER");
-    return buildError(
-      HTTPConst.serverError.INTERNAL_SERVER,
-      error,
-      "USER signUp FAILED"
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "USER signUp FAILED"
+      )
     );
   }
 };
@@ -40,17 +40,17 @@ handler.login = async (req, res) => {
   //trying to call service layer for logging in user
   try {
     result = await service.login(params, body);
-    return buildResponse(
-      HTTPConst.success.OK,
-      result,
-      "USER LOGGED IN SUCCESSFULLY"
+    return res.json(
+      buildResponse(HTTPConst.success.OK, result, "USER LOGGED IN SUCCESSFULLY")
     );
   } catch (error) {
     console.log("GETTING ERROR WHILE LOGGING USER AT HANDLER LAYER");
-    return buildError(
-      HTTPConst.serverError.INTERNAL_SERVER,
-      error,
-      "USER LOGGING FAILED"
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "USER LOGGING FAILED"
+      )
     );
   }
 };
@@ -61,17 +61,21 @@ handler.createUser = async (req, res) => {
   //trying to call service layer for creating user
   try {
     result = await service.createUser(params, body);
-    return buildResponse(
-      HTTPConst.success.CREATED,
-      result,
-      "USER CREATED SUCCESSFULLY"
+    return res.json(
+      buildResponse(
+        HTTPConst.success.CREATED,
+        result,
+        "USER CREATED SUCCESSFULLY"
+      )
     );
   } catch (error) {
     console.log("GETTING ERROR WHILE CREATING USER AT HANDLER LAYER");
-    return buildError(
-      HTTPConst.serverError.INTERNAL_SERVER,
-      error,
-      "USER CREATION FAILED"
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "USER CREATION FAILED"
+      )
     );
   }
 };
@@ -83,17 +87,21 @@ handler.updateUser = async (req, res) => {
   //trying to call service layer for creating user
   try {
     result = await service.updateUser(params, body);
-    return buildResponse(
-      HTTPConst.success.ACCEPTED,
-      result,
-      "USER updateD SUCCESSFULLY"
+    return res.json(
+      buildResponse(
+        HTTPConst.success.ACCEPTED,
+        result,
+        "USER updateD SUCCESSFULLY"
+      )
     );
   } catch (error) {
     console.log("GETTING ERROR WHILE CREATING USER AT HANDLER LAYER");
-    return buildError(
-      HTTPConst.serverError.INTERNAL_SERVER,
-      error,
-      "USER CREATION FAILED"
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "USER CREATION FAILED"
+      )
     );
   }
 };
@@ -105,17 +113,17 @@ handler.getUser = async (req, res) => {
   //trying to call service layer for creating user
   try {
     result = await service.getUser(params);
-    return buildResponse(
-      HTTPConst.success.CREATED,
-      result,
-      "USER FETCHED SUCCESSFULLY"
+    return res.json(
+      buildResponse(HTTPConst.success.OK, result, "USER FETCHED SUCCESSFULLY")
     );
   } catch (error) {
     console.log("GETTING ERROR WHILE FETCHING USER AT HANDLER LAYER");
-    return buildError(
-      HTTPConst.serverError.INTERNAL_SERVER,
-      error,
-      "USER FETCHING FAILED"
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "USER FETCHING FAILED"
+      )
     );
   }
 };

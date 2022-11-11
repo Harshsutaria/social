@@ -2,7 +2,12 @@
 
 const pg = require("pg");
 const Properties = require("./config");
-const { ParamsError, ErrorConstants, LibError, ConnectionError } = require("./postgres-errors");
+const {
+  ParamsError,
+  ErrorConstants,
+  LibError,
+  ConnectionError,
+} = require("./postgres-errors");
 const util = require("util");
 const debug = util.debuglog("postgres");
 
@@ -11,7 +16,7 @@ const connectionParams = {
   password: Properties.rdbms.password,
   host: Properties.rdbms.host,
   port: Properties.rdbms.port,
-  application_name: `NODEJS: MRIDA`,
+  application_name: `Social`,
   database: "commondb",
 };
 
@@ -25,7 +30,11 @@ let client;
 async function connect(databaseName, autoTx = true) {
   /* Param Validation */
   if (!databaseName) {
-    throw new ParamsError(ErrorConstants.ERR_INVALID_ARG, "DATABASE-NAME IS INVALID", { databaseName });
+    throw new ParamsError(
+      ErrorConstants.ERR_INVALID_ARG,
+      "DATABASE-NAME IS INVALID",
+      { databaseName }
+    );
   }
 
   if (!client || connectionParams.database !== databaseName) {
@@ -76,7 +85,10 @@ postgres.execute = async function (query, values, iterate = 0) {
   } catch (error) {
     iterate += 1;
     if (error.message.includes("not queryable") && iterate < 3) {
-      console.error(`CLIENT-ERROR OCCURRED :: `, JSON.stringify({ error }, null, 2));
+      console.error(
+        `CLIENT-ERROR OCCURRED :: `,
+        JSON.stringify({ error }, null, 2)
+      );
       console.dir(client, { depth: 0 });
       console.warn(`RETRYING AGAIN iterate:${iterate}`);
       await postgres.clientConnect(connectionParams.database);

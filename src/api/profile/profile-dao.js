@@ -101,10 +101,10 @@ dao.createUserInPostgres = async function (UserData) {
       UserData.emailId,
       UserData.gender,
       UserData.state,
-      UserData.ct,
+      UserData.CT,
       UserData.image,
       UserData.description,
-      UserData.lut,
+      UserData.LUT,
     ]);
   } catch (err) {
     console.log("Error caught :: ", err);
@@ -117,18 +117,18 @@ dao.createUserInPostgres = async function (UserData) {
 dao.updateUserInPostgres = async function (UserData) {
   console.log("INSIDE UPDATE USER DAO LAYER WITH", JSON.stringify(UserData));
 
-  let query = `update ${constants.PG_PROFILE_TABLE} set , name = $2  , description = $3 , state = $4 , image=$5 ,lut = $6  where id:$1`;
+  let query = `update ${constants.PG_PROFILE_TABLE} set  name = $2  , description = $3 , state = $4 , image=$5 ,lut = $6  where id =$1`;
 
   console.log("UPdate User Query ::", query);
   let result;
   try {
     result = await postgres.executeInsertOrUpdate(query, [
       UserData.id,
-      UserData.name,
+      UserData.userName,
       UserData.description,
       UserData.state,
       UserData.image,
-      UserData.lut,
+      UserData.LUT,
     ]);
   } catch (err) {
     console.log("Error caught :: ", err);
