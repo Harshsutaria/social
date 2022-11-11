@@ -68,6 +68,26 @@ dao.getLoginUserInfo = async function (id) {
   return result[0];
 };
 
+dao.insertUserLoginInfo = async function (userData) {
+  console.log("INSIDE insertUserLoginInfo WITH", userData);
+  let result;
+
+  let sql = `insert into ${constants.PG_PROFILE_LOGIN_TABLE} (id, name ,password) values ($1,$2 ,$3) `;
+  console.log("PREPARED SQL QUERY IS ", sql);
+  try {
+    result = await postgres.execute(sql, [
+      userData.emailId,
+      userData.name,
+      userData.password,
+    ]);
+  } catch (err) {
+    console.log("GETTING ERROR WHILE INSERTING LOGIN INFO FROM", err);
+    throw new Error(`RECORD NOT FOUND ${err}`);
+  }
+  console.log("USER LOGIN INFO INSERTED", result);
+  return result;
+};
+
 dao.createUserInPostgres = async function (UserData) {
   console.log("INSIDE CREATE USER DAO LAYER WITH", JSON.stringify(UserData));
 

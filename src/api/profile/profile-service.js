@@ -44,6 +44,35 @@ service.login = async (params, body) => {
   }
 };
 
+service.signUp = async (params, body) => {
+  try {
+    console.log("Inside signUp Service WITH", JSON.stringify(body));
+
+    //fetching login user info from postgres
+    let userData = await dao.getLoginUserInfo(body.emailId);
+
+    if (userData) throw new Error("User already registered please login");
+
+    //inserting user info into the login table
+    await dao.insertUserLoginInfo(userData);
+    //generating jwt token
+    let tokenData = await tokenization.generateUserToken(
+      userData.id,
+      userData.name,
+      username.password
+    );
+
+    return {
+      status: true,
+      token: tokenData.token,
+      userData,
+      info: "User Registration Successfully",
+    };
+  } catch (err) {
+    throw new Error(err.message || "Unable to login");
+  }
+};
+
 service.createUser = async (params, body) => {
   console.log("INSIDE CREATE USER SERVICE WITH", JSON.stringify(body));
   //adding basic validation
