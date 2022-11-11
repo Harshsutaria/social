@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const postgres = require("./postgresDB/postgres-singledb");
+const dao = require("../src/api/profile/profile-dao");
 
 const tokenSecret = "SOCIAL123";
 //initializing connection with the client
@@ -61,8 +62,8 @@ tokenization.validateUserToken = async function (userName, token) {
 /**
  * @param {string} [expiry] Ex: 1s, 1h, 1 days, 7d
  */
-tokenization.generateUserToken = async function (userName, password) {
-  let data = await generateUserToken1(userName, password, false, expiryTime);
+tokenization.generateUserToken = async function (userName, password, emailId) {
+  let data = await generateUserToken1(userName, password, emailId);
   console.log(`Token Generated for ${userName} is ${data.token}`);
   return data;
 };
@@ -86,59 +87,19 @@ module.exports = tokenization;
 
 /********************************************************Required Methods *******************************************/
 
-const generateUserToken1 = async function (userName, password, expiry) {
+const generateUserToken1 = async function (
+  userName,
+  password,
+  emailId,
+  expiry
+) {
   console.log("INSIDE GENERATE USER TOKEN WITH", userName, password);
-  //trying to authenticate user
-  const authResult = await authenticateUser(userName, password);
-
-  //adding basic validation
-  if (!authResult.status && authResult.error) {
-    return { errorMessage: authResult.error.message };
-  }
 
   /* Preparing user payload based on the auth result*/
-  const tokenData = prepareTokenData(authResult);
+  const tokenData = prepareTokenData({ name: userName, password, emailId });
   /**Preparing JWT token for the user */
   const token = jwtLib.generateJWT(tokenData, expiry);
   return { token, userName };
-};
-
-const authenticateUser = async function (userName, password) {
-  let result;
-  const ErrorResult = {
-    status: false,
-    error: {},
-  };
-
-  if (!userName) {
-    ErrorResult.error = Error("USERNAME IS INVALID");
-    return ErrorResult;
-  }
-
-  userName = userName.replace(/^(\+91|)/u, "+91");
-
-  try {
-    result = await dao.getPlayerData(userName, true, false, true);
-  } catch (error) {
-    console.error("UNABLE TO GET USER-DATA :: ", error);
-    return { error: error, status: false };
-  }
-
-  if (!result || typeof result != "object" || Object.keys(result).length <= 0) {
-    ErrorResult.error = Error("USER-DATA NOT FOUND");
-    return ErrorResult;
-  } else if (!result.password) {
-    ErrorResult.error = Error("FETCHED INVALID USER-DATA");
-    return ErrorResult;
-  }
-
-  if (password == result.password) {
-    result.status = true;
-  } else {
-    result.status = false;
-    result.error = Error("INCORRECT PASSWORD");
-  }
-  return result;
 };
 
 function prepareTokenData(userData) {
@@ -146,10 +107,6 @@ function prepareTokenData(userData) {
     id: userData.id,
     name: userData.name,
     emailId: userData.emailId,
-    image: userData.image,
-    gender: userData.gender,
-    state: userData.state,
-    agegroup: userData.agegroup,
   };
   return result;
 }

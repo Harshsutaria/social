@@ -56,7 +56,7 @@ dao.getLoginUserInfo = async function (id) {
   console.log("INSIDE getLoginUserInfo WITH", id);
   let result;
 
-  let sql = `select * from ${constants.PG_PROFILE_LOGIN_TABLE} where id = ${id} `;
+  let sql = `select * from ${constants.PG_PROFILE_LOGIN_TABLE} where id = '${id}' `;
   console.log("PREPARED SQL QUERY IS ", sql);
   try {
     result = await postgres.execute(sql);

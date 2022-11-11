@@ -39,6 +39,15 @@ service.login = async (params, body) => {
   }
 };
 
+// {
+//     "id":"045c7c34-3954-48f1-9484-8262f7d0bc19",
+//     "userName":"Ronaldo!",
+//     "state":"maharashtrea",
+//     "image":"446",
+//     "gender":"male",
+//     "description":"hey i am professional footballer",
+//     "emailId":"ronaldo@gmail.com"
+// }
 service.signUp = async (params, body) => {
   try {
     console.log("Inside signUp Service WITH", JSON.stringify(body));
@@ -49,12 +58,12 @@ service.signUp = async (params, body) => {
     if (userData) throw new Error("User already registered please login");
 
     //inserting user info into the login table
-    await dao.insertUserLoginInfo(userData);
+    await dao.insertUserLoginInfo(body);
     //generating jwt token
     let tokenData = await tokenization.generateUserToken(
-      userData.id,
-      userData.name,
-      username.password
+      body.emailId,
+      body.name,
+      body.password
     );
 
     return {
