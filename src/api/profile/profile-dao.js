@@ -38,6 +38,20 @@ dao.getUser = async (id) => {
   return result;
 };
 
+dao.getUserByName = async (name) => {
+  console.log("INSIDE  getUserByName DAO LAYER WITH", JSON.stringify(name));
+  let sql = `select * from ${constants.PG_PROFILE_TABLE} where name ilike '${name}%'`;
+  console.log("PREPARED SQL QUERY AS ", sql);
+  let result;
+  try {
+    result = await postgres.execute(sql);
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING DATA FROM POSTGRES");
+  }
+  console.log("Fetched user successfully", JSON.stringify(result));
+  return result;
+};
+
 dao.insertUpdateInDynamo = async function (id, data) {
   console.log("INSIDE insertUpdateInDynamo WITH", id);
   let result;

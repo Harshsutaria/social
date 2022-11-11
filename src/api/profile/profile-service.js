@@ -124,6 +124,20 @@ service.getUser = async (params) => {
   return result;
 };
 
+service.getUserByName = async (params) => {
+  console.log("INSIDE GET USER BY NAME SERVICE WITH", JSON.stringify(params));
+
+  //throwing error if exception occurs
+  if (!params.name) {
+    console.error("Invalid Request PARAMS");
+    throw new Error("INVALID REQUEST PARAMS AT GET SERVICE");
+  }
+
+  //calling the dao layer for dumping profile
+  let result = await dao.getUserByName(params.name);
+  return result;
+};
+
 /*********************Required Methods****************/
 function createRequestPayload(body) {
   return {

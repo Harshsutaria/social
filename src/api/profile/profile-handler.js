@@ -107,7 +107,7 @@ handler.updateUser = async (req, res) => {
 };
 
 handler.getUser = async (req, res) => {
-  console.log("INSIDE CREATE USER HANDLER WITH");
+  console.log("INSIDE GET USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
@@ -115,6 +115,32 @@ handler.getUser = async (req, res) => {
     result = await service.getUser(params);
     return res.json(
       buildResponse(HTTPConst.success.OK, result, "USER FETCHED SUCCESSFULLY")
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING USER AT HANDLER LAYER");
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "USER FETCHING FAILED"
+      )
+    );
+  }
+};
+
+handler.getUser = async (req, res) => {
+  console.log("INSIDE GET USER BY NAME");
+  let { params } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating user
+  try {
+    result = await service.getUserByName(params);
+    return res.json(
+      buildResponse(
+        HTTPConst.success.OK,
+        result,
+        "USER FETCHED BY NAME SUCCESSFULLY"
+      )
     );
   } catch (error) {
     console.log("GETTING ERROR WHILE FETCHING USER AT HANDLER LAYER");

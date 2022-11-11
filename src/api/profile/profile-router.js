@@ -7,5 +7,5 @@ app.post("/signUp", handler.signUp);
 app.post("/", handler.createUser);
 app.put("/:id", handler.updateUser);
 app.get("/:id", handler.getUser);
-
+app.get("/", handler.searchUser);
 module.exports = app;
