@@ -37,3 +37,21 @@ image varchar,
 authorid varchar not null,
 authorname varchar not null
 )
+
+create table post_like(
+postid varchar not null,
+activity varchar not null,
+profilekey varchar not null,
+profilename varchar not null,
+ct varchar ,
+primary key(postid,activity,profilekey)
+)
+
+create table post_comment(
+postid varchar not null,
+activity varchar not null,
+profilekey varchar not null,
+profilename varchar not null,
+ct varchar ,
+message varchar not null
+)

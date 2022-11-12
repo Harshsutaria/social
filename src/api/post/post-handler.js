@@ -62,6 +62,58 @@ handler.updatePost = async (req, res) => {
   }
 };
 
+handler.like = async (req, res) => {
+  console.log("INSIDE LIKE Post HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating Post
+  try {
+    result = await service.like(params, body);
+    return res.json(
+      buildResponse(
+        HTTPConst.success.ACCEPTED,
+        result,
+        "LIKED POST SUCCESSFULLY"
+      )
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE LIKING Post AT HANDLER LAYER");
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "LIKE POST FAILED"
+      )
+    );
+  }
+};
+
+handler.dislike = async (req, res) => {
+  console.log("INSIDE dislike Post HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating Post
+  try {
+    result = await service.dislike(params, body);
+    return res.json(
+      buildResponse(
+        HTTPConst.success.ACCEPTED,
+        result,
+        "dislike POST SUCCESSFULLY"
+      )
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE dislike Post AT HANDLER LAYER");
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "dislike POST FAILED"
+      )
+    );
+  }
+};
+
 handler.getPost = async (req, res) => {
   console.log("INSIDE GET USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);

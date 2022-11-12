@@ -83,53 +83,44 @@ dao.getAllPost = async (authorId) => {
   return result;
 };
 
-dao.insertUpdateUserActivityInSql = async (params, body) => {
-  console.log(
-    "INSIDE insertUpdateUserActivityInSql DAO LAYER WITH",
-    JSON.stringify(params, body)
-  );
-
-  let sql = `insert into ${constants.PG_USER_ACTIVITY_TABLE}(source_profile,activityid ,destination_profile,source_profile_name,destination_profile_name) values($1,$2,$3,$4,$5)
-    on conflict ( source_profile ,activityid , destination_profile) do update set activityid =$2 where ${constants.PG_USER_ACTIVITY_TABLE}.source_profile = '$1' and ${constants.PG_USER_ACTIVITY_TABLE}.destination_profile='$3'`;
-
-  console.log("PREPARED SQL QUERY AS ", sql);
+dao.insertLikePostRecord = async function (postId, body) {
+  console.log("INSIDE insertLikePostRecord WITH", postId, JSON.stringify(body));
   let result;
+
+  let sql = `insert into ${constants.PG_POST_LIKE} (postid, activity,profilekey ,profilename,ct) values ($1,$2,$3,$4,$5)`;
+
+  console.log("PREPARED SQL QUERY IS ", sql);
   try {
-    result = await postgres.executeInsertOrUpdate(sql, [
-      params.source_profile,
-      params.activityid,
-      params.destination_profile,
-      body.source_profile_name,
-      body.destination_profile_name,
+    result = await postgres.execute(sql, [
+      postId,
+      "LIKE",
+      body.profileKey,
+      body.profileName,
+      new Date().toISOString(),
     ]);
-  } catch (error) {
-    console.log(
-      "GETTING ERROR WHILE INSERT/UPDATE ACTIVITY DATA FROM POSTGRES",
-      error
-    );
+  } catch (err) {
+    console.log("GETTING ERROR WHILE INSERTING LIKE INFO FROM", err);
+    throw new Error(`RECORD NOT FOUND ${err}`);
   }
-  console.log("RESULT IS result", JSON.stringify(result));
+  console.log("USER LIKE INFO INSERTED", result);
   return result;
 };
 
-dao.deleteUserActivityInSql = async (params, body) => {
+dao.deleteLikePostRecord = async (postId, body) => {
   console.log(
-    "INSIDE insertUpdateUserActivityInSql DAO LAYER WITH",
-    JSON.stringify(params, body)
+    "INSIDE deleteLikePostRecord DAO LAYER WITH",
+    JSON.stringify(postId, body)
   );
 
-  let sql = `delete from ${constants.PG_USER_ACTIVITY_TABLE} where activityid='FOLLOW' and source_profile =$1 
-            and destination_profile = $2`;
+  let sql = `delete from ${constants.PG_POST_LIKE} where activity ='LIKE' and postid=$1 
+            and profilekey = $2`;
 
   console.log("PREPARED SQL QUERY AS ", sql);
   let result;
 
   //trying to execute sq query
   try {
-    result = await postgres.execute(sql, [
-      params.source_profile,
-      params.destination_profile,
-    ]);
+    result = await postgres.execute(sql, [postId, body.profileKey]);
   } catch (error) {
     console.log(
       "GETTING ERROR WHILE DELETE ACTIVITY DATA FROM POSTGRES",
@@ -151,42 +142,6 @@ dao.insertUpdateInDynamo = async function (id, data) {
     throw new Error(`RECORD NOT FOUND ${err}`);
   }
   console.log("POST UPDATED IN DYNAMO");
-  return result;
-};
-
-dao.getLoginUserInfo = async function (id) {
-  console.log("INSIDE getLoginUserInfo WITH", id);
-  let result;
-
-  let sql = `select * from ${constants.PG_PROFILE_LOGIN_TABLE} where id = '${id}' `;
-  console.log("PREPARED SQL QUERY IS ", sql);
-  try {
-    result = await postgres.execute(sql);
-  } catch (err) {
-    console.log("GETTING ERROR WHILE FETCHING LOGIN INFO FROM", err);
-    throw new Error(`RECORD NOT FOUND ${err}`);
-  }
-  console.log("USER LOGIN INFO IS", result);
-  return result[0];
-};
-
-dao.insertUserLoginInfo = async function (userData) {
-  console.log("INSIDE insertUserLoginInfo WITH", userData);
-  let result;
-
-  let sql = `insert into ${constants.PG_PROFILE_LOGIN_TABLE} (id, name ,password) values ($1,$2 ,$3) `;
-  console.log("PREPARED SQL QUERY IS ", sql);
-  try {
-    result = await postgres.execute(sql, [
-      userData.emailId,
-      userData.name,
-      userData.password,
-    ]);
-  } catch (err) {
-    console.log("GETTING ERROR WHILE INSERTING LOGIN INFO FROM", err);
-    throw new Error(`RECORD NOT FOUND ${err}`);
-  }
-  console.log("USER LOGIN INFO INSERTED", result);
   return result;
 };
 

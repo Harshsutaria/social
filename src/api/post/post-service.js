@@ -93,25 +93,53 @@ service.getUserByName = async (params) => {
   return result;
 };
 
-service.activity = async (params, body) => {
-  console.log("INSIDE UPDATE USER ACTIVITY", JSON.stringify(params));
+service.like = async (params, body) => {
+  console.log("INSIDE Like POST ACTIVITY", JSON.stringify(params, body));
 
   let result;
 
   //throwing error if exception occurs
-  if (!params.source_profile || !params.destination_profile) {
+  if (!body.profileKey || !body.profileName) {
     console.error("Invalid Request Payload");
     throw new Error("INVALID REQUEST payload for user activity");
   }
 
-  //calling the dao layer for dumping profile
-  if (params.activityid == "LIKE") {
-    result = await dao.insertUpdateUserActivityInSql(params, body);
-  } else {
-    console.log("REMOVE SOURCE AND DESTINATION ACTIVITY IN SQL");
-    result = await dao.deleteUserActivityInSql(params);
+  //fetching the post information from dao layer
+  let post = await dao.getPost(params.id);
+  //updating like count and lut
+  post.likeCount += 1;
+  post.LUT = new Date().toISOString();
+
+  //updating post into the sql
+  await dao.updatePost(post);
+
+  //inserting like table record
+  await dao.insertLikePostRecord(params.id, body);
+  return result;
+};
+
+service.dislike = async (params, body) => {
+  console.log("INSIDE dislike POST ACTIVITY", JSON.stringify(params, body));
+
+  let result;
+
+  //throwing error if exception occurs
+  if (!body.profileKey || !body.profileName) {
+    console.error("Invalid Request Payload");
+    throw new Error("INVALID REQUEST payload for user activity");
   }
 
+  //fetching the post information from dao layer
+  let post = await dao.getPost(params.id);
+  //updating like count and lut
+  post.likeCount -= 1;
+  post.LUT = new Date().toISOString();
+
+  //updating post into the sql
+  await dao.updatePost(post);
+
+  //inserting like table record
+  await dao.deleteLikePostRecord(params.id, body);
   return result;
 };
 
