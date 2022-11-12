@@ -114,6 +114,32 @@ handler.dislike = async (req, res) => {
   }
 };
 
+handler.comment = async (req, res) => {
+  console.log("INSIDE Comment Post HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating Post
+  try {
+    result = await service.comment(params, body);
+    return res.json(
+      buildResponse(
+        HTTPConst.success.ACCEPTED,
+        result,
+        "Comment POST SUCCESSFULLY"
+      )
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE comment Post AT HANDLER LAYER");
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "Comment POST FAILED"
+      )
+    );
+  }
+};
+
 handler.getPost = async (req, res) => {
   console.log("INSIDE GET USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);

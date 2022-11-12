@@ -5,6 +5,7 @@ const app = express.Router();
 app.post("/", handler.createPost);
 app.post("/like/:id", handler.like);
 app.post("/unlike/:id", handler.dislike);
+app.post("/comment/:id", handler.comment);
 app.put("/:id", handler.updatePost);
 app.get("/:id", handler.getPost);
 app.get("/", handler.getAllPost);

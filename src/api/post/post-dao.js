@@ -106,6 +106,35 @@ dao.insertLikePostRecord = async function (postId, body) {
   return result;
 };
 
+dao.insertCommentPostRecord = async function (postId, body) {
+  console.log(
+    "INSIDE insertCommentPostRecord WITH",
+    postId,
+    JSON.stringify(body)
+  );
+
+  let result;
+
+  let sql = `insert into ${constants.PG_POST_COMMENT} (postid, activity,profilekey ,profilename,ct,message) values ($1,$2,$3,$4,$5,$6)`;
+
+  console.log("PREPARED SQL QUERY IS ", sql);
+  try {
+    result = await postgres.execute(sql, [
+      postId,
+      "COMMENT",
+      body.profileKey,
+      body.profileName,
+      new Date().toISOString(),
+      body.message,
+    ]);
+  } catch (err) {
+    console.log("GETTING ERROR WHILE INSERTING LIKE INFO FROM", err);
+    throw new Error(`RECORD NOT FOUND ${err}`);
+  }
+  console.log("USER LIKE INFO INSERTED", result);
+  return result;
+};
+
 dao.deleteLikePostRecord = async (postId, body) => {
   console.log(
     "INSIDE deleteLikePostRecord DAO LAYER WITH",

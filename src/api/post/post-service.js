@@ -143,6 +143,31 @@ service.dislike = async (params, body) => {
   return result;
 };
 
+service.comment = async (params, body) => {
+  console.log("INSIDE comment POST ACTIVITY", JSON.stringify(params, body));
+
+  let result;
+
+  //throwing error if exception occurs
+  if (!body.profileKey || !body.profileName || !body.message) {
+    console.error("Invalid Request Payload");
+    throw new Error("INVALID REQUEST payload for user activity");
+  }
+
+  //fetching the post information from dao layer
+  let post = await dao.getPost(params.id);
+  //updating comment count and lut
+  post.commentCount += 1;
+  post.LUT = new Date().toISOString();
+
+  //updating post into the sql
+  await dao.updatePost(post);
+
+  //inserting comment table record
+  await dao.insertCommentPostRecord(params.id, body);
+  return result;
+};
+
 // service.activity(
 //   {
 //     source_profile: "1484848454",
