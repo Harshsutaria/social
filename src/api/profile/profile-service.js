@@ -1,6 +1,7 @@
 const tokenization = require("../../../utils/JWT");
 const helper = require("./profile-helper");
 const dao = require("./profile-dao");
+const postService = require("../post/post-service");
 const uuid = require("uuid4");
 
 /**
@@ -123,8 +124,14 @@ service.getUser = async (params) => {
   }
 
   //calling the dao layer for dumping profile
-  let result = await dao.getUser(params.id);
-  return result;
+  let user = await dao.getUser(params.id);
+  //fetching followers list , following list , no of post
+  user.followers = await dao.getFollowers(params.id);
+  //fetching following list
+  user.following = await dao.getFollowing(params.id);
+  //fetching posts
+  user.posts = await postService.getAllPost({ id: params.id });
+  return user;
 };
 
 service.getUserByName = async (params) => {

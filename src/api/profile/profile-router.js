@@ -8,5 +8,5 @@ app.post("/", handler.createUser);
 app.put("/:id", handler.updateUser);
 app.get("/:id", handler.getUser);
 app.get("/", handler.getUserByName);
-app.post("/:source_profile/:activityId/:destination_profile", handler.activity);
+app.post("/:source_profile/:activityid/:destination_profile", handler.activity);
 module.exports = app;

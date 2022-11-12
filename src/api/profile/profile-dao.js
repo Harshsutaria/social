@@ -38,6 +38,61 @@ dao.getUser = async (id) => {
   return result;
 };
 
+dao.getFollowers = async (id) => {
+  console.log("INSIDE GET FOLLOWERS DAO LAYER WITH", JSON.stringify(id));
+
+  let sql = `select count(*)over() , * from ${constants.PG_USER_ACTIVITY_TABLE} where destination_profile = '${id}'`;
+  let result = {
+    count: 0,
+    followers: [],
+  };
+  let data = {};
+  try {
+    data = await postgres.execute(sql);
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING DATA FROM DYNAMO");
+  }
+  console.log("Fetched user successfully", JSON.stringify(data));
+  if (Array.isArray(data) && data.length > 0) {
+    result.count = data[0].count;
+    result.followers = data.map((x) => {
+      return {
+        name: x.source_profile,
+        id: x.source_profile_name,
+      };
+    });
+  }
+  return result;
+};
+
+dao.getFollowing = async (id) => {
+  console.log("INSIDE GET FOLLOWERS DAO LAYER WITH", JSON.stringify(id));
+
+  let sql = `select count(*)over() , * from ${constants.PG_USER_ACTIVITY_TABLE} where source_profile = '${id}'`;
+  let result = {
+    count: 0,
+    following: [],
+  };
+
+  let data;
+  try {
+    data = await postgres.execute(sql);
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING DATA FROM DYNAMO");
+  }
+  console.log("Fetched user successfully", JSON.stringify(data));
+  if (Array.isArray(data) && data.length > 0) {
+    result.count = data[0].count;
+    result.following = data.map((x) => {
+      return {
+        name: x.destination_profile_name,
+        id: x.destination_profile,
+      };
+    });
+  }
+  return result;
+};
+
 dao.getUserByName = async (name) => {
   console.log("INSIDE  getUserByName DAO LAYER WITH", JSON.stringify(name));
   let sql = `select * from ${constants.PG_PROFILE_TABLE} where name ilike '${name}%'`;
