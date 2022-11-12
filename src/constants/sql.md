@@ -24,3 +24,16 @@ destination_profile varchar not null,
 destination_profile_name varchar not null,
 primary key(source_profile , activityid , destination_profile)
 )
+
+create table profile_post(
+id varchar primary key not null,
+title varchar not null,
+description varchar not null,
+ct varchar ,
+lut varchar ,
+likecount varchar,
+commentcount varchar ,
+image varchar,
+authorid varchar not null,
+authorname varchar not null
+)

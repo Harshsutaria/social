@@ -1,4 +1,4 @@
-const service = require("./profile-service");
+const service = require("./post-service");
 const {
   HTTPConst,
   buildResponse,
@@ -6,60 +6,17 @@ const {
 } = require("../../../utils/http-constants");
 
 /**
- * Container for profile handler.
+ * Container for post handler.
  */
 let handler = {};
 
-handler.signUp = async (req, res) => {
-  console.log("INSIDE signUp USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
-  let result;
-  //trying to call service layer for logging in user
-  try {
-    result = await service.signUp(params, body);
-    return res.json(
-      buildResponse(HTTPConst.success.OK, result, "USER signUp IN SUCCESSFULLY")
-    );
-  } catch (error) {
-    console.log("GETTING ERROR WHILE signUp USER AT HANDLER LAYER");
-    return res.json(
-      buildError(
-        HTTPConst.serverError.INTERNAL_SERVER,
-        error,
-        "USER signUp FAILED"
-      )
-    );
-  }
-};
-
-handler.login = async (req, res) => {
-  console.log("INSIDE LOGIN USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
-  let result;
-  //trying to call service layer for logging in user
-  try {
-    result = await service.login(params, body);
-    return res.json(
-      buildResponse(HTTPConst.success.OK, result, "USER LOGGED IN SUCCESSFULLY")
-    );
-  } catch (error) {
-    console.log("GETTING ERROR WHILE LOGGING USER AT HANDLER LAYER");
-    return res.json(
-      buildError(
-        HTTPConst.serverError.INTERNAL_SERVER,
-        error,
-        "USER LOGGING FAILED"
-      )
-    );
-  }
-};
-handler.createUser = async (req, res) => {
+handler.createPost = async (req, res) => {
   console.log("INSIDE CREATE USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
   try {
-    result = await service.createUser(params, body);
+    result = await service.createPost(params, body);
     return res.json(
       buildResponse(
         HTTPConst.success.CREATED,
@@ -68,7 +25,7 @@ handler.createUser = async (req, res) => {
       )
     );
   } catch (error) {
-    console.log("GETTING ERROR WHILE CREATING USER AT HANDLER LAYER");
+    console.log("GETTING ERROR WHILE creating AT HANDLER LAYER");
     return res.json(
       buildError(
         HTTPConst.serverError.INTERNAL_SERVER,
@@ -79,49 +36,75 @@ handler.createUser = async (req, res) => {
   }
 };
 
-handler.updateUser = async (req, res) => {
-  console.log("INSIDE update USER HANDLER WITH");
+handler.updatePost = async (req, res) => {
+  console.log("INSIDE update Post HANDLER WITH");
   let { params, body } = getServiceArgs(req);
   let result;
-  //trying to call service layer for creating user
+  //trying to call service layer for creating Post
   try {
-    result = await service.updateUser(params, body);
+    result = await service.updatePost(params, body);
     return res.json(
       buildResponse(
         HTTPConst.success.ACCEPTED,
         result,
-        "USER updateD SUCCESSFULLY"
+        "Post updateD SUCCESSFULLY"
       )
     );
   } catch (error) {
-    console.log("GETTING ERROR WHILE CREATING USER AT HANDLER LAYER");
+    console.log("GETTING ERROR WHILE Updating Post AT HANDLER LAYER");
     return res.json(
       buildError(
         HTTPConst.serverError.INTERNAL_SERVER,
         error,
-        "USER CREATION FAILED"
+        "Post Updation FAILED"
       )
     );
   }
 };
 
-handler.getUser = async (req, res) => {
+handler.getPost = async (req, res) => {
   console.log("INSIDE GET USER HANDLER WITH");
   let { params, body } = getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
   try {
-    result = await service.getUser(params);
+    result = await service.getPost(params);
     return res.json(
-      buildResponse(HTTPConst.success.OK, result, "USER FETCHED SUCCESSFULLY")
+      buildResponse(HTTPConst.success.OK, result, "Post FETCHED SUCCESSFULLY")
     );
   } catch (error) {
-    console.log("GETTING ERROR WHILE FETCHING USER AT HANDLER LAYER");
+    console.log("GETTING ERROR WHILE FETCHING Post AT HANDLER LAYER");
     return res.json(
       buildError(
         HTTPConst.serverError.INTERNAL_SERVER,
         error,
-        "USER FETCHING FAILED"
+        "Post FETCHING FAILED"
+      )
+    );
+  }
+};
+
+handler.getAllPost = async (req, res) => {
+  console.log("INSIDE GET ALL POST HANDLER WITH");
+  let { params, body } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating user
+  try {
+    result = await service.getAllPost(params);
+    return res.json(
+      buildResponse(
+        HTTPConst.success.OK,
+        result,
+        "All Post FETCHED SUCCESSFULLY"
+      )
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING ALL Post AT HANDLER LAYER");
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "Post FETCHING FAILED"
       )
     );
   }
