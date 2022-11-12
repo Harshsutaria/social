@@ -9,11 +9,7 @@ const dynamoDBInstance = () =>
   });
 
 // creating generic connection with the aws infra
-AWS.config.update({
-  accessKeyId: "AKIAYBHRY7N53OWSYPOW",
-  secretAccessKey: "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",
-  region: "ap-south-1",
-});
+AWS.config.update({});
 
 // method used to insert in dynamo
 dynamo.putItem = async function putItem(id, data, tableName) {
