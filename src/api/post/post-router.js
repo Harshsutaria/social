@@ -9,6 +9,7 @@ app.post("/comment/:id", handler.comment);
 app.put("/:id", handler.updatePost);
 app.get("/:id", handler.getPost);
 app.get("/", handler.getAllPost);
+app.delete("/:id", handler.deletePost);
 
 module.exports = app;
 
@@ -19,7 +20,6 @@ module.exports = app;
 //     "image":"argentina.png",
 //     "tags": "[football]",
 //     "description":"all set for the world cup",
-
 // }
 
 // {

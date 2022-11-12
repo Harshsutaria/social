@@ -232,6 +232,32 @@ handler.activity = async (req, res) => {
   }
 };
 
+handler.deletePost = async (req, res) => {
+  console.log("INSIDE deletePost POST HANDLER WITH");
+  let { params } = getServiceArgs(req);
+  let result;
+  //trying to call service layer for creating user
+  try {
+    result = await service.deletePost(params);
+    return res.json(
+      buildResponse(
+        HTTPConst.success.OK,
+        result,
+        "All Post FETCHED SUCCESSFULLY"
+      )
+    );
+  } catch (error) {
+    console.log("GETTING ERROR WHILE FETCHING ALL Post AT HANDLER LAYER");
+    return res.json(
+      buildError(
+        HTTPConst.serverError.INTERNAL_SERVER,
+        error,
+        "POST DELETED FAILED"
+      )
+    );
+  }
+};
+
 /**utility method to fetch service args */
 function getServiceArgs(req) {
   console.log("request is ", req.headers);

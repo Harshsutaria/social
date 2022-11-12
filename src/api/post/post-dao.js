@@ -38,6 +38,14 @@ dao.getPost = async (id) => {
   return result;
 };
 
+dao.deletePost = async (id) => {
+  console.log("INSIDE DELETE POST DAO LAYER WITH", JSON.stringify(id));
+  //delete post data from dynamo
+  await dao.dropDataFromDynamo(id);
+  //delete post from sql
+  await dao.deletePostRecordInSql(id);
+};
+
 dao.getPostByName = async (name) => {
   console.log("INSIDE  getPostByName DAO LAYER WITH", JSON.stringify(name));
   let sql = `select * from ${constants.PG_POST_PROFILE} where title ilike '${name}%'`;
@@ -160,6 +168,42 @@ dao.deleteLikePostRecord = async (postId, body) => {
   return result;
 };
 
+dao.deletePostRecordInSql = async (postId) => {
+  console.log(
+    "INSIDE deleteLikeCommentPostRecord DAO LAYER WITH",
+    JSON.stringify(postId)
+  );
+
+  //preparing delete query for like
+  let sqlLike = `delete from ${constants.PG_POST_LIKE} where activity ='LIKE' and postid='${postId}'`;
+
+  //preparing delete query for comments
+  let sqlComment = `delete from ${constants.PG_POST_COMMENT} where  postid= '${postId}'`;
+
+  //final delete post from sql
+  let sql = `delete from ${constants.PG_POST_PROFILE} where id= '${postId}'`;
+
+  console.log("PREPARED SQL QUERY AS ", sqlLike, sqlComment, sql);
+
+  let result;
+
+  //trying to execute sq query
+  try {
+    result = await Promise.all([
+      postgres.execute(sqlLike),
+      postgres.execute(sqlComment),
+      postgres.execute(sql),
+    ]);
+  } catch (error) {
+    console.log(
+      "GETTING ERROR WHILE DELETE ACTIVITY DATA FROM POSTGRES",
+      error
+    );
+  }
+  console.log("RESULT IS result", JSON.stringify(result));
+  return result;
+};
+
 dao.insertUpdateInDynamo = async function (id, data) {
   console.log("INSIDE insertUpdateInDynamo WITH", id);
   let result;
@@ -243,6 +287,18 @@ dao.getPostFromDynamo = async function (id) {
     throw new Error(`RECORD NOT FOUND ${err}`);
   }
   console.log("FETCHED POST FROM  DYNAMO");
+  return result;
+};
+
+dao.dropDataFromDynamo = async function (id) {
+  console.log("INSIDE DROP DATA FROM DYNAMO", id);
+  let result;
+  //deleting data from dynamo using delete lib
+  try {
+    result = await dynamo.deleteItem(id, constants.DYNAMO_PROFILE_TABLE);
+  } catch (error) {
+    console.log("GETTING ERROR WHILE DELETING RECORD FROM DYNAMO");
+  }
   return result;
 };
 

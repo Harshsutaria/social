@@ -168,6 +168,21 @@ service.comment = async (params, body) => {
   return result;
 };
 
+service.deletePost = async (params) => {
+  console.log("INSIDE GET POST SERVICE WITH", JSON.stringify(params));
+  //adding basic validation
+  let validation = helper.validateGetRequestParam(params);
+  //throwing error if exception occurs
+  if (!validation.status) {
+    console.error("Invalid Request PARAMS");
+    throw new Error("INVALID REQUEST PARAMS AT CREATE SERVICE");
+  }
+
+  //calling the dao layer for dumping profile
+  let result = await dao.deletePost(params.id);
+  return result;
+};
+
 // service.activity(
 //   {
 //     source_profile: "1484848454",
