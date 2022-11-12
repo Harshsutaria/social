@@ -17,11 +17,7 @@ dynamo.putItem = async function putItem(id, data, tableName) {
   // console.log("id is", id);
 
   // creating aws connection
-  AWS.config.update({
-    accessKeyId: "AKIAYBHRY7N53OWSYPOW",
-    secretAccessKey: "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",
-    region: "ap-south-1",
-  });
+  AWS.config.update({});
 
   // creating put request
   const putRequest = {
