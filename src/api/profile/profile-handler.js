@@ -4,6 +4,7 @@ const {
   buildResponse,
   buildError,
 } = require("../../../utils/http-constants");
+const tokenization = require("../../../utils/JWT");
 
 /**
  * Container for profile handler.
@@ -12,7 +13,7 @@ let handler = {};
 
 handler.signUp = async (req, res) => {
   console.log("INSIDE signUp USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
+  let { params, body } = await getServiceArgs(req);
   let result;
   //trying to call service layer for logging in user
   try {
@@ -34,7 +35,7 @@ handler.signUp = async (req, res) => {
 
 handler.login = async (req, res) => {
   console.log("INSIDE LOGIN USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
+  let { params, body } = await getServiceArgs(req);
   let result;
   //trying to call service layer for logging in user
   try {
@@ -53,9 +54,10 @@ handler.login = async (req, res) => {
     );
   }
 };
+
 handler.createUser = async (req, res) => {
   console.log("INSIDE CREATE USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
+  let { params, body } = await getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
   try {
@@ -81,7 +83,7 @@ handler.createUser = async (req, res) => {
 
 handler.updateUser = async (req, res) => {
   console.log("INSIDE update USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
+  let { params, body } = await getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
   try {
@@ -107,7 +109,7 @@ handler.updateUser = async (req, res) => {
 
 handler.getUser = async (req, res) => {
   console.log("INSIDE GET USER HANDLER WITH");
-  let { params, body } = getServiceArgs(req);
+  let { params, body } = await getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
   try {
@@ -129,7 +131,7 @@ handler.getUser = async (req, res) => {
 
 handler.getUserByName = async (req, res) => {
   console.log("INSIDE GET USER BY NAME");
-  let { params } = getServiceArgs(req);
+  let { params } = await getServiceArgs(req);
   let result;
   //trying to call service layer for creating user
   try {
@@ -155,7 +157,7 @@ handler.getUserByName = async (req, res) => {
 
 handler.activity = async (req, res) => {
   console.log("INSIDE activity BY NAME");
-  let { params, body } = getServiceArgs(req);
+  let { params, body } = await getServiceArgs(req);
   let result;
   //trying to call service layer for fetching user
   try {
@@ -172,13 +174,37 @@ handler.activity = async (req, res) => {
 };
 
 /**utility method to fetch service args */
-function getServiceArgs(req) {
+async function getServiceArgs(req) {
   console.log("request is ", req.headers);
   const author = req.headers;
+
+  if (!author.username || !author.token) {
+    throw new Error("INVALID REQUEST HEADERS!!!!");
+  }
+
+  if (author.password) {
+    req.body.password = author.password || "";
+  }
+
+  //validating jwt token
+  await validateUserToken(author.username, author.token);
+
   const body = req.body || {};
   const params = { ...req.query, ...req.params };
   console.log("author is", author, params, body);
   return { author, params, body };
+}
+
+async function validateUserToken(name, token) {
+  let data = await tokenization.validateUserToken(name, token);
+
+  //adding basic validation
+  if (data.errorMessage) {
+    console.log("INVALID JWT TOKEN");
+    throw new Error("INVALID USER TOKEN");
+  }
+
+  return data;
 }
 
 module.exports = { handler };

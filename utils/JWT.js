@@ -17,7 +17,7 @@ const jwtLib = {};
 jwtLib.generateJWT = function (tokenData, expiry) {
   const token = jwt.sign(tokenData, tokenSecret, {
     algorithm: "HS256",
-    issuer: "MRIDA",
+    issuer: "social",
     expiresIn: expiry || "7d",
   });
   return token;
@@ -53,9 +53,6 @@ jwtLib.decode = function (token) {
 tokenization.validateUserToken = async function (userName, token) {
   const tokenData = jwtLib.verifyJWT(token);
   console.log(tokenData);
-  if (tokenData.mobileno != userName && !tokenData.errorMessage) {
-    return { errorMessage: "INVALID USER" };
-  }
   return tokenData;
 };
 
@@ -63,7 +60,7 @@ tokenization.validateUserToken = async function (userName, token) {
  * @param {string} [expiry] Ex: 1s, 1h, 1 days, 7d
  */
 tokenization.generateUserToken = async function (userName, password, emailId) {
-  let data = await generateUserToken1(userName, password, emailId);
+  let data = await generateUserTokenJWT(userName, password, emailId);
   console.log(`Token Generated for ${userName} is ${data.token}`);
   return data;
 };
@@ -87,7 +84,7 @@ module.exports = tokenization;
 
 /********************************************************Required Methods *******************************************/
 
-const generateUserToken1 = async function (
+const generateUserTokenJWT = async function (
   userName,
   password,
   emailId,

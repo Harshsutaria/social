@@ -10,7 +10,7 @@ let service = {};
 
 service.login = async (params, body) => {
   try {
-    console.log("Inside login");
+    console.log("Inside login", JSON.stringify(body));
     let loginStatus = false;
 
     //fetching login user info from postgres
@@ -19,18 +19,21 @@ service.login = async (params, body) => {
     if (!userData) throw new Error(`User not registered, Please sign-up`);
 
     if (body.password && body.password == userData.password) {
+      console.log("HELLO");
       loginStatus = true;
     }
 
-    if (!loginStatus) throw new Error(`Invalid password`);
-
+    if (!loginStatus) {
+      console.log("HOLLA");
+      throw new Error(`Invalid password`);
+    }
     console.log("USER LOGIN SUCCESSFULLY");
 
     //generating jwt token
     let tokenData = await tokenization.generateUserToken(
       userData.id,
       userData.name,
-      username.password
+      userData.password
     );
 
     return { status: true, token: tokenData.token, userData };
